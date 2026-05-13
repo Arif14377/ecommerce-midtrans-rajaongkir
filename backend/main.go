@@ -3,10 +3,14 @@ package main
 import (
 	"net/http"
 
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/config"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// load cofig .env
+	config.LoadEnv()
+
 	r := gin.Default()
 
 	// test server
@@ -16,5 +20,5 @@ func main() {
 		})
 	})
 
-	r.Run(":8888")
+	r.Run(":" + config.GetEnv("APP_PORT"))
 }
