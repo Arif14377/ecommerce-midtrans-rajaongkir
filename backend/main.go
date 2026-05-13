@@ -4,12 +4,16 @@ import (
 	"net/http"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/config"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// load cofig .env
 	config.LoadEnv()
+
+	// inisialisasi database
+	database.InitDB()
 
 	r := gin.Default()
 
