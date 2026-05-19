@@ -31,7 +31,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return jwtKey, nil
 		})
 
-		if err != nil || !token.Valid {
+		if err != nil || token == nil || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Wrong email or password",
 			})
