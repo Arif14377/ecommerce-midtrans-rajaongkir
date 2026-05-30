@@ -6,6 +6,7 @@ import (
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/config"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database/seeders"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +20,7 @@ func main() {
 	// menjalankan seeder
 	seeders.Seed()
 
-	r := gin.Default()
+	r := routes.SetupRouter()
 
 	// test server
 	r.GET("/ping", func(c *gin.Context) {
