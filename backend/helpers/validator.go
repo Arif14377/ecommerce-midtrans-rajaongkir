@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TranslateErrorMessage(err error, request interface{}) map[string]string {
+func TranslateErrorMessage(err error, request any) map[string]string {
 	errorsMap := make(map[string]string)
 
 	if validationErrors, ok := err.(validator.ValidationErrors); ok {

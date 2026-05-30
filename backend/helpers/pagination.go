@@ -116,7 +116,7 @@ func BuildHostURL(c *gin.Context) string {
 	return scheme + "://" + c.Request.Host
 }
 
-func PaginateResponse(c *gin.Context, data interface{}, total int64, page, limit int, baseURL, search, message string) {
+func PaginateResponse(c *gin.Context, data any, total int64, page, limit int, baseURL, search, message string) {
 	lastPage := TotalPage(total, limit)
 
 	dataLen := reflect.ValueOf(data).Len()
