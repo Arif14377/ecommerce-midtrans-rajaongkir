@@ -182,3 +182,21 @@ func DeletePermission(c *gin.Context) {
 		Message: "Permission deleted successfully",
 	})
 }
+
+func GetAllPermissions(c *gin.Context) {
+	var permissions []models.Permission
+	if err := database.DB.Order("name asc").Find(&permissions).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to fetch permissions.",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "All permissions list.",
+		Data:    permissions,
+	})
+}
