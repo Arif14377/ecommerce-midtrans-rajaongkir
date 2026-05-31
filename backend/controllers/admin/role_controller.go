@@ -2,6 +2,7 @@ package adminController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -93,6 +94,25 @@ func CreateRole(c *gin.Context) {
 	c.JSON(http.StatusCreated, structs.SuccessResponse{
 		Success: true,
 		Message: "Role Created Successfully",
+		Data:    role,
+	})
+}
+
+func GetRoleDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var role models.Role
+
+	if err := database.DB.Preload("Permissions").First(&role, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Role not found.",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Role detail.",
 		Data:    role,
 	})
 }
