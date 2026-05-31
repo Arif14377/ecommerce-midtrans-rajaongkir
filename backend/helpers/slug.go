@@ -5,6 +5,14 @@ import (
 	"strings"
 )
 
+// Slugify mengubah teks menjadi slug URL-friendly.
+//
+// Function ini mengubah teks menjadi huruf kecil, menghapus karakter selain
+// huruf/angka/spasi/tanda hubung, lalu mengganti spasi dengan tanda hubung.
+//
+// Contoh:
+//
+//	slug := helpers.Slugify("Kaos Polos Hitam") // hasil: "kaos-polos-hitam"
 func Slugify(text string) string {
 	slug := strings.TrimSpace(text)
 

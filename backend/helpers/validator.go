@@ -10,6 +10,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// TranslateErrorMessage mengubah error validasi atau database menjadi map error
+// yang siap dikirim sebagai response JSON.
+//
+// Parameter request digunakan untuk membaca tag json dan label dari struct
+// request saat err berisi validator.ValidationErrors. Jika error bukan berasal
+// dari validasi request, request boleh diisi nil.
+//
+// Contoh:
+//
+//	errors := helpers.TranslateErrorMessage(err, req)
+//	dbErrors := helpers.TranslateErrorMessage(err, nil)
 func TranslateErrorMessage(err error, request any) map[string]string {
 	errorsMap := make(map[string]string)
 
@@ -63,6 +74,12 @@ func TranslateErrorMessage(err error, request any) map[string]string {
 	return errorsMap
 }
 
+// formatErrorMessage membuat pesan error berbahasa Indonesia dari satu field
+// validation error.
+//
+// Contoh:
+//
+//	message := formatErrorMessage(fieldError, "Email")
 func formatErrorMessage(fieldError validator.FieldError, displayName string) string {
 	switch fieldError.Tag() {
 	case "required":
@@ -86,10 +103,23 @@ func formatErrorMessage(fieldError validator.FieldError, displayName string) str
 	}
 }
 
+// IsDuplicateEntryError mengecek apakah error database adalah error duplicate
+// entry.
+//
+// Contoh:
+//
+//	if helpers.IsDuplicateEntryError(err) {
+//		// handle data duplikat
+//	}
 func IsDuplicateEntryError(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "Duplicate entry")
 }
 
+// extractDuplicateField mengambil nama field dari pesan error duplicate entry.
+//
+// Contoh:
+//
+//	field := extractDuplicateField("Duplicate entry 'x' for key 'users.email'")
 func extractDuplicateField(errMsg string) string {
 	re := regexp.MustCompile(`for key '([^']+)'`)
 	matches := re.FindStringSubmatch(errMsg)
@@ -108,6 +138,14 @@ func extractDuplicateField(errMsg string) string {
 	return ""
 }
 
+// cleanFieldName mengubah nama field Go menjadi snake_case.
+//
+// Function ini dipakai untuk membuat nama field error yang konsisten dengan
+// format JSON.
+//
+// Contoh:
+//
+//	field := cleanFieldName("EmailAddress") // hasil: "email_address"
 func cleanFieldName(field string) string {
 	var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 	var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")

@@ -8,6 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetAuthUserID mengambil ID user yang sedang login dari Gin context.
+//
+// Function ini membaca username yang sebelumnya disimpan middleware ke context,
+// lalu mencari user tersebut di database.
+//
+// Contoh:
+//
+//	userID, err := helpers.GetAuthUserID(c)
 func GetAuthUserID(c *gin.Context) (uint, error) {
 	username, exists := c.Get("username")
 	if !exists {

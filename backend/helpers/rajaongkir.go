@@ -13,6 +13,15 @@ import (
 
 const RAJAONGKIR_URL = "https://rajaongkir.komerce.id/api/v1"
 
+// RajaOngkirRequest mengirim request ke API RajaOngkir dan mengembalikan field
+// data dari response.
+//
+// Function ini otomatis menambahkan API key dari environment RAJAONGKIR_API_KEY
+// dan memvalidasi meta.code dari response RajaOngkir.
+//
+// Contoh:
+//
+//	data, err := helpers.RajaOngkirRequest(http.MethodGet, "/destination/domestic-destination", nil, "")
 func RajaOngkirRequest(method, path string, body []byte, contentType string) (any, error) {
 	apiKey := config.GetEnv("RAJAONGKIR_API_KEY")
 	url := RAJAONGKIR_URL + path
@@ -52,6 +61,14 @@ func RajaOngkirRequest(method, path string, body []byte, contentType string) (an
 	return result.Data, nil
 }
 
+// ToJSON mengubah data Go menjadi JSON dalam bentuk []byte.
+//
+// Function ini mengabaikan error marshal, sehingga sebaiknya hanya digunakan
+// untuk data yang memang pasti bisa diubah menjadi JSON.
+//
+// Contoh:
+//
+//	body := helpers.ToJSON(map[string]any{"origin": "501"})
 func ToJSON(data any) []byte {
 	b, _ := json.Marshal(data)
 	return b

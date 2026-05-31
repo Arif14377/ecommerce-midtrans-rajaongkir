@@ -11,6 +11,14 @@ import (
 	"github.com/midtrans/midtrans-go/snap"
 )
 
+// GetSnapToken membuat transaksi Snap Midtrans untuk order dan user tertentu.
+//
+// Function ini menyusun item transaksi dari order items, menambahkan ongkir
+// jika ada, lalu mengembalikan snap token dan redirect URL dari Midtrans.
+//
+// Contoh:
+//
+//	token, redirectURL, err := helpers.GetSnapToken(order, user)
 func GetSnapToken(order models.Order, user models.User) (string, string, error) {
 	serverKey := config.GetEnv("MIDTRANS_SERVER_KEY")
 	isProd := config.GetEnv("MIDTRANS_IS_PRODUCTION") == "true"
@@ -73,6 +81,14 @@ func GetSnapToken(order models.Order, user models.User) (string, string, error) 
 	return snapResp.Token, snapResp.RedirectURL, nil
 }
 
+// VerifySignature memvalidasi signature key dari notifikasi pembayaran Midtrans.
+//
+// Signature dihitung dari orderId, statusCode, grossAmount, dan
+// MIDTRANS_SERVER_KEY, lalu dibandingkan dengan signatureKey dari Midtrans.
+//
+// Contoh:
+//
+//	isValid := helpers.VerifySignature(orderID, statusCode, grossAmount, signatureKey)
 func VerifySignature(orderId, statusCode, grossAmount, signatureKey string) bool {
 	serverKey := config.GetEnv("MIDTRANS_SERVER_KEY")
 	signatureString := orderId + statusCode + grossAmount + serverKey

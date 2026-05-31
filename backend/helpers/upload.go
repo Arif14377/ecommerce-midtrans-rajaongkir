@@ -11,6 +11,20 @@ import (
 	"github.com/google/uuid"
 )
 
+// UploadFile memvalidasi dan menyimpan file upload berdasarkan konfigurasi.
+//
+// Function ini mengecek file wajib ada, ukuran maksimum, extension yang
+// diperbolehkan, membuat folder tujuan jika belum ada, lalu menyimpan file
+// dengan nama UUID.
+//
+// Contoh:
+//
+//	result := helpers.UploadFile(c, structs.UploadConfig{
+//		File: file,
+//		DestinationDir: "uploads/products",
+//		AllowedTypes: []string{".jpg", ".jpeg", ".png"},
+//		MaxSize: 2 << 20,
+//	})
 func UploadFile(c *gin.Context, config structs.UploadConfig) structs.UploadResult {
 	if config.File == nil {
 		return structs.UploadResult{
@@ -82,6 +96,13 @@ func UploadFile(c *gin.Context, config structs.UploadConfig) structs.UploadResul
 
 }
 
+// RemoveFile menghapus file dari filesystem berdasarkan path.
+//
+// Function ini mengembalikan error dari os.Remove jika file gagal dihapus.
+//
+// Contoh:
+//
+//	err := helpers.RemoveFile("uploads/products/image.png")
 func RemoveFile(filePath string) error {
 	return os.Remove(filePath)
 }

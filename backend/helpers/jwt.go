@@ -9,6 +9,13 @@ import (
 
 var jwtKey = []byte(config.GetEnv("JWT_SECRET"))
 
+// GenerateToken membuat JWT untuk username dengan masa berlaku 24 jam.
+//
+// Username disimpan sebagai subject claim pada token.
+//
+// Contoh:
+//
+//	token, err := helpers.GenerateToken(user.Username)
 func GenerateToken(username string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 
@@ -27,6 +34,13 @@ func GenerateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
+// VerifyToken memverifikasi JWT dan mengembalikan token hasil parsing.
+//
+// Function ini menggunakan JWT_SECRET yang sama dengan GenerateToken.
+//
+// Contoh:
+//
+//	token, err := helpers.VerifyToken(tokenString)
 func VerifyToken(tokenString string) (*jwt.Token, error) {
 	claims := &jwt.RegisteredClaims{}
 
