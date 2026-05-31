@@ -104,3 +104,53 @@ func GetPermissionDetail(c *gin.Context) {
 		Data:    permission,
 	})
 }
+
+func UpdatePermission(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var permission models.Permission
+	var request structs.PermissionCreateRequest
+
+	// 1. cek data
+	if err := database.DB.First(&permission, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Permission not found.",
+		})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation failed.",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	permission.Name = request.Name
+	if err := database.DB.Save(&permission).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Update permission failed",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update permission.",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Permission updated successfully.",
+		Data:    permission,
+	})
+
+}
