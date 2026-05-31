@@ -2,6 +2,7 @@ package adminController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -42,4 +43,64 @@ func FindPermissions(c *gin.Context) {
 	}
 
 	helpers.PaginateResponse(c, permissions, total, page, limit, baseURL, search, "List Data Permissions")
+}
+
+func CreatePermissions(c *gin.Context) {
+	var request structs.PermissionCreateRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	permission := models.Permission{
+		Name: request.Name,
+	}
+
+	if err := database.DB.Create(&permission).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Create permission failed.",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to create permission.",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+	}
+
+	c.JSON(http.StatusCreated, structs.SuccessResponse{
+		Success: true,
+		Message: "Permission created successfully.",
+		Data:    permission,
+	})
+
+}
+
+func GetPermissionDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var permission models.Permission
+
+	if err := database.DB.First(&permission, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Permission not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Permission detail.",
+		Data:    permission,
+	})
 }

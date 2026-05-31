@@ -21,6 +21,8 @@ func SetupRouter() *gin.Engine {
 	admin.Use(middlewares.AuthMiddleware())
 	{
 		admin.GET("/permissions", middlewares.Permission("permissions-index"), adminController.FindPermissions)
+		admin.POST("/permissions", middlewares.Permission("permissions-create"), adminController.CreatePermissions)
+		admin.GET("/permissions/:id", middlewares.Permission("permissions-show"), adminController.GetPermissionDetail)
 	}
 
 	return router
