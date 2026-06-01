@@ -180,3 +180,31 @@ func UpdateRole(c *gin.Context) {
 		Data:    role,
 	})
 }
+
+// DeleteRole menghapus role
+func DeleteRole(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var role models.Role
+
+	if err := database.DB.First(&role, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Role Not Found",
+		})
+		return
+	}
+
+	if err := database.DB.Select("Permissions").Delete(&role).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete role",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Role Deleted Successfully",
+	})
+}

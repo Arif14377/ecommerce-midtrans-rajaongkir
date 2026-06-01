@@ -33,6 +33,7 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/roles", middlewares.Permission("roles-create"), adminController.CreateRole)
 		admin.GET("roles/:id", middlewares.Permission("roles-show"), adminController.GetRoleDetail)
 		admin.PUT("/roles/:id", middlewares.Permission("roles-update"), adminController.UpdateRole)
+		admin.DELETE("/roles/:id", middlewares.Permission("roles-delete"), adminController.DeleteRole)
 	}
 
 	return router
