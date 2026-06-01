@@ -116,3 +116,67 @@ func GetRoleDetail(c *gin.Context) {
 		Data:    role,
 	})
 }
+
+func UpdateRole(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var role models.Role
+	var request structs.RoleUpdateRequest
+
+	if err := database.DB.Preload("Permissions").First(&role, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Role not found.",
+		})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	role.Name = request.Name
+
+	var newPermissions []models.Permission
+	if len(request.PermissionIDs) > 0 {
+		database.DB.Where("id IN ?", request.PermissionIDs).Find(&newPermissions)
+	}
+
+	if err := database.DB.Model(&role).Association("Permissions").Replace(newPermissions); err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update role permissions",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	if err := database.DB.Save(&role).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Update Role Failed",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update role",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	database.DB.Preload("Permissions").First(&role, id)
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Role Updated Successfully",
+		Data:    role,
+	})
+}
