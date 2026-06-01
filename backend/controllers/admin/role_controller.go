@@ -208,3 +208,22 @@ func DeleteRole(c *gin.Context) {
 		Message: "Role Deleted Successfully",
 	})
 }
+
+// GetAllRoles mengambil semua data role tanpa pagination
+func GetAllRoles(c *gin.Context) {
+	var roles []models.Role
+	if err := database.DB.Preload("Permissions").Order("name asc").Find(&roles).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to fetch roles",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "All Roles List",
+		Data:    roles,
+	})
+}
