@@ -61,3 +61,67 @@ func FindUsers(c *gin.Context) {
 
 	helpers.PaginateResponse(c, data, total, page, limit, baseURL, search, "List Data User.")
 }
+
+func CreateUser(c *gin.Context) {
+	var request structs.UserCreateRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation failed.",
+			Errors:  helpers.TranslateErrorMessage(err, request),
+		})
+		return
+	}
+
+	hashedPassword, err := helpers.HashPassword(request.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to hash password",
+		})
+		return
+	}
+
+	user := models.User{
+		Name:     request.Name,
+		Username: request.Username,
+		Email:    request.Email,
+		Password: hashedPassword,
+	}
+
+	var roles []models.Role
+	if len(request.RoleIDs) > 0 {
+		database.DB.Where("id in ?", request.RoleIDs).Find(&roles)
+	}
+	user.Roles = roles
+
+	if err := database.DB.Create(&user).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Create User Failed",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to create user.",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, structs.SuccessResponse{
+		Success: true,
+		Message: "User created successfully",
+		Data: gin.H{
+			"id":       user.Id,
+			"name":     user.Name,
+			"username": user.Username,
+			"email":    user.Email,
+		},
+	})
+}

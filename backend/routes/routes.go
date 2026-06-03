@@ -38,6 +38,7 @@ func SetupRouter() *gin.Engine {
 
 		// Route Users
 		admin.GET("/users", middlewares.Permission("users-index"), adminController.FindUsers)
+		admin.POST("/users", middlewares.Permission("users-create"), adminController.CreateUser)
 	}
 
 	return router
