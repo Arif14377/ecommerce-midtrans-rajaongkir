@@ -198,3 +198,38 @@ func UpdateUser(c *gin.Context) {
 	})
 
 }
+
+func GetUserDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var user models.User
+
+	if err := database.DB.Preload("Roles").First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "User Not Found",
+		})
+		return
+	}
+
+	var userRoles []structs.RoleResponse
+	for _, r := range user.Roles {
+		userRoles = append(userRoles, structs.RoleResponse{
+			Id:   r.Id,
+			Name: r.Name,
+		})
+	}
+
+	res := structs.UserDetailResponse{
+		Id:       user.Id,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		Roles:    userRoles,
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "User Detail",
+		Data:    res,
+	})
+}
