@@ -2,6 +2,7 @@ package adminController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -124,4 +125,76 @@ func CreateUser(c *gin.Context) {
 			"email":    user.Email,
 		},
 	})
+}
+
+func UpdateUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var user models.User
+	var req structs.UserUpdateRequest
+
+	if err := database.DB.Preload("Roles").First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "User not found",
+		})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Failed",
+			Errors:  helpers.TranslateErrorMessage(err, req),
+		})
+		return
+	}
+
+	// ganti data lama dengan data baru
+	user.Name = req.Name
+	user.Username = req.Username
+	user.Email = req.Email
+
+	if req.Password != "" {
+		hashed, err := helpers.HashPassword(req.Password)
+		if err == nil {
+			user.Password = hashed
+		}
+	}
+
+	var newRoles []models.Role
+	if len(req.RoleIDs) > 0 {
+		database.DB.Where("id IN ?", req.RoleIDs).Find(&newRoles)
+	}
+
+	if err := database.DB.Model(&user).Association("Roles").Replace(newRoles); err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update user roles",
+		})
+		return
+	}
+
+	// simpan user
+	if err := database.DB.Save(&user).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Update User Failed (Duplicate Data)",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update user",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "User Updated Successfully",
+	})
+
 }
