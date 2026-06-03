@@ -233,3 +233,31 @@ func GetUserDetail(c *gin.Context) {
 		Data:    res,
 	})
 }
+
+// DeleteUser
+func DeleteUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var user models.User
+
+	if err := database.DB.First(&user, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "User Not Found",
+		})
+		return
+	}
+
+	if err := database.DB.Select("Roles").Delete(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete user",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "User Deleted Successfully",
+	})
+}
