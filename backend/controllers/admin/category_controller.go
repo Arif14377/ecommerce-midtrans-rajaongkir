@@ -42,3 +42,48 @@ func FindCategories(c *gin.Context) {
 
 	helpers.PaginateResponse(c, categories, total, page, limit, baseURL, search, "List Data Category.")
 }
+
+func CreateCategory(c *gin.Context) {
+	var request structs.CategoryCreateRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	slug := helpers.Slugify(request.Name)
+
+	category := models.Category{
+		Name: request.Name,
+		Slug: slug,
+	}
+
+	if err := database.DB.Create(&category).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Category name or slug already exists.",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to create category",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, structs.SuccessResponse{
+		Success: true,
+		Message: "Category Created Successfully",
+		Data:    structs.ToCategoryResponse(category),
+	})
+
+}
