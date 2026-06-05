@@ -13,12 +13,13 @@ func Permission(permissionName string) gin.HandlerFunc {
 		username, exists := c.Get("username")
 		if !exists {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"error": "Wrong email or password",
+				"error": "You must login.",
 			})
 			c.Abort()
 			return
 		}
 
+		// User not found.
 		var user models.User
 		err := database.DB.
 			Preload("Roles.Permissions").
