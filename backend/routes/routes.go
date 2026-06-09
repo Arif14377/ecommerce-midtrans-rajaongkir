@@ -53,6 +53,7 @@ func SetupRouter() *gin.Engine {
 
 		// Route Sliders
 		admin.GET("/sliders", middlewares.Permission("sliders-index"), adminController.FindSliders)
+		admin.POST("/sliders", middlewares.Permission("sliders-create"), adminController.CreateSlider)
 	}
 
 	return router
