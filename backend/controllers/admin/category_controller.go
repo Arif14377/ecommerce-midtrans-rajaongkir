@@ -187,3 +187,22 @@ func DeleteCategory(c *gin.Context) {
 		Message: "Category Deleted Successfully",
 	})
 }
+
+// GetAllCategories mengambil semua categories tanpa pagination
+func GetAllCategories(c *gin.Context) {
+	var categories []models.Category
+	if err := database.DB.Order("name asc").Find(&categories).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to fetch categories",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "All Categories List",
+		Data:    categories,
+	})
+}
