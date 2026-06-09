@@ -108,3 +108,54 @@ func GetCategoryDetail(c *gin.Context) {
 		Data:    structs.ToCategoryResponse(category),
 	})
 }
+
+// Update category
+func UpdateCategory(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var category models.Category
+	var request structs.CategoryUpdateRequest
+
+	if err := database.DB.First(&category, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Category Not Found",
+		})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	category.Name = request.Name
+	category.Slug = helpers.Slugify(request.Name)
+
+	if err := database.DB.Save(&category).Error; err != nil {
+		if helpers.IsDuplicateEntryError(err) {
+			c.JSON(http.StatusConflict, structs.ErrorResponse{
+				Success: false,
+				Message: "Update Category Failed (Duplicate)",
+				Errors:  helpers.TranslateErrorMessage(err, nil),
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update category",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Category Updated Successfully",
+		Data:    structs.ToCategoryResponse(category),
+	})
+
+}

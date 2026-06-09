@@ -47,6 +47,7 @@ func SetupRouter() *gin.Engine {
 		admin.GET("/categories", middlewares.Permission("categories-index"), adminController.FindCategories)
 		admin.POST("/categories", middlewares.Permission("categories-create"), adminController.CreateCategory)
 		admin.GET("/categories/:id", middlewares.Permission("categories-show"), adminController.GetCategoryDetail)
+		admin.PUT("/categories/:id", middlewares.Permission("categories-update"), adminController.UpdateCategory)
 	}
 
 	return router
