@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
@@ -104,5 +105,34 @@ func CreateSlider(c *gin.Context) {
 		Success: true,
 		Message: "Slider Created Successfully",
 		Data:    slider,
+	})
+}
+
+func DeleteSlider(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var slider models.Slider
+
+	if err := database.DB.First(&slider, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Slider Not Found",
+		})
+		return
+	}
+
+	os.Remove(fmt.Sprintf("./public/uploads/sliders/%s", slider.Image))
+
+	if err := database.DB.Delete(&slider).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete slider",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Slider Deleted Successfully",
 	})
 }

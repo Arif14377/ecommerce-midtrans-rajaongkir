@@ -54,6 +54,7 @@ func SetupRouter() *gin.Engine {
 		// Route Sliders
 		admin.GET("/sliders", middlewares.Permission("sliders-index"), adminController.FindSliders)
 		admin.POST("/sliders", middlewares.Permission("sliders-create"), adminController.CreateSlider)
+		admin.DELETE("/sliders/:id", middlewares.Permission("sliders-delete"), adminController.DeleteSlider)
 	}
 
 	return router
