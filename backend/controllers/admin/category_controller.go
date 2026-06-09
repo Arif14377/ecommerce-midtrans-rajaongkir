@@ -159,3 +159,31 @@ func UpdateCategory(c *gin.Context) {
 	})
 
 }
+
+// DeleteCategory
+func DeleteCategory(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var category models.Category
+
+	if err := database.DB.First(&category, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Category Not Found",
+		})
+		return
+	}
+
+	if err := database.DB.Delete(&category).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete category",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Category Deleted Successfully",
+	})
+}
