@@ -2,6 +2,7 @@ package adminController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -86,4 +87,24 @@ func CreateCategory(c *gin.Context) {
 		Data:    structs.ToCategoryResponse(category),
 	})
 
+}
+
+// Get category detail
+func GetCategoryDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var category models.Category
+
+	if err := database.DB.First(&category, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Category not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Category Detail",
+		Data:    structs.ToCategoryResponse(category),
+	})
 }
