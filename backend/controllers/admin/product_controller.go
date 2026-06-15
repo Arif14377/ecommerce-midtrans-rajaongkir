@@ -39,3 +39,80 @@ func FindProducts(c *gin.Context) {
 
 	helpers.PaginateResponse(c, data, total, page, limit, baseURL, search, "List Data Product")
 }
+
+// Create Product
+func CreateProduct(c *gin.Context) {
+	var request structs.ProductCreateRequest
+
+	// Gunakan ShouldBind agar support multipart/form-data dan validasi struct
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	// Buat Slug
+	slug := helpers.Slugify(request.Name)
+
+	product := models.Product{
+		Name:        request.Name,
+		Slug:        slug,
+		Description: request.Description,
+		Price:       request.Price,
+		Stock:       request.Stock,
+		CategoryId:  request.CategoryId,
+	}
+
+	// Simpan Product
+	if err := database.DB.Create(&product).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to create product",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	form, _ := c.MultipartForm()
+	files := form.File["images[]"]
+
+	if len(files) > 0 {
+		config := structs.UploadConfig{
+			AllowedTypes:   []string{".jpg", ".jpeg", ".png", ".webp"},
+			MaxSize:        2 * 1024 * 1024, // 2MB
+			DestinationDir: "./public/uploads/products",
+		}
+
+		for i, file := range files {
+			config.File = file
+			res := helpers.UploadFile(c, config)
+			if res.Response == nil {
+				// Simpan ke DB
+				productImage := models.ProductImage{
+					ProductId: product.Id,
+					ImageUrl:  res.FileName,
+				}
+
+				if i == 0 {
+					productImage.IsPrimary = true
+				} else {
+					productImage.IsPrimary = false
+				}
+
+				database.DB.Create(&productImage)
+			}
+		}
+	}
+
+	// Reload product dengan relasi
+	database.DB.Preload("Category").Preload("Images").First(&product, product.Id)
+
+	c.JSON(http.StatusCreated, structs.SuccessResponse{
+		Success: true,
+		Message: "Product Created Successfully",
+		Data:    structs.ToProductResponse(product),
+	})
+}
