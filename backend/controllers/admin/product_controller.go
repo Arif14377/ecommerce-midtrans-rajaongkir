@@ -2,6 +2,7 @@ package adminController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -113,6 +114,26 @@ func CreateProduct(c *gin.Context) {
 	c.JSON(http.StatusCreated, structs.SuccessResponse{
 		Success: true,
 		Message: "Product Created Successfully",
+		Data:    structs.ToProductResponse(product),
+	})
+}
+
+// Menampilkan detail produk
+func GetProductDetail(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var product models.Product
+
+	if err := database.DB.Preload("Category").Preload("Images").First(&product, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Product Not Found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Product Detail",
 		Data:    structs.ToProductResponse(product),
 	})
 }
