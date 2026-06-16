@@ -137,3 +137,82 @@ func GetProductDetail(c *gin.Context) {
 		Data:    structs.ToProductResponse(product),
 	})
 }
+
+func UpdateProduct(c *gin.Context) {
+	// ambil param id, siapkan models product
+	id, _ := strconv.Atoi(c.Param("id"))
+	var product models.Product
+
+	// cari product di db
+	if err := database.DB.First(&product, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Product not found.",
+		})
+		return
+	}
+
+	// binding data request
+	var request structs.ProductCreateRequest
+
+	if err := c.ShouldBind(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Failed",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	// update data produk
+	product.Name = request.Name
+	product.Slug = helpers.Slugify(request.Name)
+	product.Description = request.Description
+	product.Price = request.Price
+	product.Stock = request.Stock
+	product.CategoryId = request.CategoryId
+
+	// simpan data update ke db
+	if err := database.DB.Save(&product).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to update product",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+	}
+
+	// handle image upload (append jika ada foto baru)
+	form, _ := c.MultipartForm()
+	files := form.File["images[]"]
+
+	if len(files) > 0 {
+		config := structs.UploadConfig{
+			AllowedTypes:   []string{".jpg", ".jpeg", ".png", ".webp"},
+			MaxSize:        2 * 1024 * 1024,
+			DestinationDir: "./public/uploads/products",
+		}
+
+		for _, file := range files {
+			config.File = file
+			res := helpers.UploadFile(c, config)
+			if res.Response == nil {
+				imageURL := res.FileName
+				productImage := models.ProductImage{
+					ProductId: product.Id,
+					ImageUrl:  imageURL,
+				}
+				database.DB.Create(&productImage)
+			}
+		}
+	}
+
+	database.DB.Preload("Category").Preload("Images").First(&product, id)
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Product Updated Successfully",
+		Data:    structs.ToProductResponse(product),
+	})
+
+}
