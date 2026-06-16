@@ -216,3 +216,44 @@ func UpdateProduct(c *gin.Context) {
 	})
 
 }
+
+func DeleteProduct(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	var product models.Product
+
+	// Ambil product beserta images dan reviews
+	if err := database.DB.
+		Preload("Images").
+		Preload("Reviews").
+		First(&product, id).Error; err != nil {
+
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Product Not Found",
+		})
+
+	}
+
+	// Hapus file image dari storage
+	for _, image := range product.Images {
+		filePath := "./public/uploads/products/" + image.ImageUrl
+		_ = helpers.RemoveFile(filePath)
+	}
+
+	// Hapus product beserta relasinya
+	if err := database.DB.Select("Images", "Reviews").Delete(&product).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete product",
+			Errors:  helpers.TranslateErrorMessage(err, nil),
+		})
+		return
+
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Product Deleted Successfully",
+	})
+}
