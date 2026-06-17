@@ -20,6 +20,9 @@ func SetupRouter() *gin.Engine {
 	admin := api.Group("/admin")
 	admin.Use(middlewares.AuthMiddleware())
 	{
+		// Route Dashboard
+		admin.GET("/dashboard", middlewares.Permission("dashboard-index"), adminController.Dashboard)
+
 		// Route Permissions
 		admin.GET("/permissions/all", middlewares.Permission("permissions-index"), adminController.GetAllPermissions)
 		admin.GET("/permissions", middlewares.Permission("permissions-index"), adminController.FindPermissions)
