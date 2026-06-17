@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/controllers"
 	adminController "github.com/arif14377/ecommerce-midtrans-rajaongkir/controllers/admin"
+	publicController "github.com/arif14377/ecommerce-midtrans-rajaongkir/controllers/public"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -75,6 +76,12 @@ func SetupRouter() *gin.Engine {
 
 		// Route Sales Reports
 		admin.GET("/reports/sales", middlewares.Permission("reports-index"), adminController.GetSalesReport)
+	}
+
+	// Public router group
+	public := api.Group("/public")
+	{
+		public.GET("/sliders", publicController.ListSliders)
 	}
 
 	return router
