@@ -69,6 +69,9 @@ func SetupRouter() *gin.Engine {
 		// Route Orders
 		admin.GET("orders", middlewares.Permission("orders-index"), adminController.FindOrders)
 		admin.GET("orders/:id", middlewares.Permission("orders-show"), adminController.GetOrderDetail)
+
+		// Route Sales Reports
+		admin.GET("/reports/sales", middlewares.Permission("reports-index"), adminController.GetSalesReport)
 	}
 
 	return router
