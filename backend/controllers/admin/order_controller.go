@@ -74,3 +74,28 @@ func FindOrders(c *gin.Context) {
 
 	helpers.PaginateResponse(c, responses, total, page, limit, baseURL, search, "List data orders")
 }
+
+func GetOrderDetail(c *gin.Context) {
+	id := c.Param("id")
+
+	var order models.Order
+	err := database.DB.
+		Preload("User").
+		Preload("Items").
+		Preload("Items.Product").
+		First(&order, "id = ?", id).Error
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Order Not Found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Order Detail",
+		Data:    order,
+	})
+}
