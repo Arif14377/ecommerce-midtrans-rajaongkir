@@ -62,6 +62,9 @@ func SetupRouter() *gin.Engine {
 		admin.GET("/products/:id", middlewares.Permission("products-show"), adminController.GetProductDetail)
 		admin.PUT("/products/:id", middlewares.Permission("products-update"), adminController.UpdateProduct)
 		admin.DELETE("/products/:id", middlewares.Permission("products-delete"), adminController.DeleteProduct)
+
+		// Route Customers
+		admin.GET("/customers", middlewares.Permission("customers-index"), adminController.FindCustomers)
 	}
 
 	return router
