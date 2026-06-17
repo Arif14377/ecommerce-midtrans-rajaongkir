@@ -30,3 +30,23 @@ func ListCategories(c *gin.Context) {
 		Data:    data,
 	})
 }
+
+// GetCategoryBySlug
+func GetCategoryBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	var category models.Category
+
+	if err := database.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Category Not Found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Category Detail",
+		Data:    structs.ToCategoryResponse(category),
+	})
+}

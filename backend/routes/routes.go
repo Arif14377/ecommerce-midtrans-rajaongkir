@@ -83,6 +83,7 @@ func SetupRouter() *gin.Engine {
 	{
 		public.GET("/sliders", publicController.ListSliders)
 		public.GET("/categories", publicController.ListCategories)
+		public.GET("/categories/:slug", publicController.GetCategoryBySlug)
 	}
 
 	return router
