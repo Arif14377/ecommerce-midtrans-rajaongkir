@@ -9,6 +9,7 @@ import (
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/models"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/structs"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func ListProduct(c *gin.Context) {
@@ -77,5 +78,59 @@ func ListProduct(c *gin.Context) {
 			"limit": limitCount,
 			"pages": (int(total) + limitCount - 1) / limitCount,
 		},
+	})
+}
+
+func GetProductDetailBySlug(c *gin.Context) {
+	slug := c.Param("slug")
+	var product models.Product
+
+	if err := database.DB.Preload("Category").Preload("Images").Preload("Reviews").Preload("Reviews.User").Where("slug = ?", slug).First(&product).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Product not found.",
+		})
+		return
+	}
+
+	hostURL := helpers.BuildHostURL(c)
+	productResponse := structs.ToProductResponseWithBaseURL(product, hostURL)
+
+	// Check Authorization Header for Optional Review Permission
+	tokenString := c.GetHeader("Authorization")
+	if tokenString != "" {
+		// Remove "Bearer " prefix
+		if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+			tokenString = tokenString[7:]
+		}
+
+		// Parse token manually (simulating auth middleware logic)
+		token, err := helpers.VerifyToken(tokenString) // We need to expose VerifyToken in helpers
+		if err == nil && token.Valid {
+			// Extract User ID
+			claims, ok := token.Claims.(*jwt.RegisteredClaims)
+			if ok && token.Valid {
+				var user models.User
+				// Find user by username (subject in claims)
+				if err := database.DB.Where("username = ?", claims.Subject).First(&user).Error; err == nil {
+					// Check if user has a completed order for this product
+					var count int64
+					database.DB.Table("orders").
+						Joins("JOIN order_items ON orders.id = order_items.order_id").
+						Where("orders.user_id = ? AND order_items.product_id = ? AND (orders.status = 'paid' OR orders.status = 'shipped' OR orders.status = 'delivered')", user.Id, product.Id).
+						Count(&count)
+
+					if count > 0 {
+						productResponse.CanReview = true
+					}
+				}
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Product Detail",
+		Data:    productResponse,
 	})
 }

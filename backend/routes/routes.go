@@ -85,6 +85,7 @@ func SetupRouter() *gin.Engine {
 		public.GET("/categories", publicController.ListCategories)
 		public.GET("/categories/:slug", publicController.GetCategoryBySlug)
 		public.GET("/products", publicController.ListProduct)
+		public.GET("/products/:slug", publicController.GetProductDetailBySlug)
 	}
 
 	return router
