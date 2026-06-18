@@ -94,6 +94,7 @@ func SetupRouter() *gin.Engine {
 	{
 		userProtected.GET("/carts", publicController.GetCart)
 		userProtected.POST("/carts", publicController.AddToCart)
+		userProtected.PUT("/carts", publicController.UpdateCart)
 	}
 
 	return router
