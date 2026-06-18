@@ -88,5 +88,12 @@ func SetupRouter() *gin.Engine {
 		public.GET("/products/:slug", publicController.GetProductDetailBySlug)
 	}
 
+	// User protected group
+	userProtected := router.Group("/api")
+	userProtected.Use(middlewares.AuthMiddleware())
+	{
+		userProtected.GET("/carts", publicController.GetCart)
+	}
+
 	return router
 }
