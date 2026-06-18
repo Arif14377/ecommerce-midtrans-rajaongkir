@@ -38,3 +38,56 @@ func GetAddresses(c *gin.Context) {
 		Data:    addresses,
 	})
 }
+
+func CreateAddress(c *gin.Context) {
+	// ambil user id dari context middleware
+	userID, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	// ambil request body request address
+	var request structs.AddressCreateRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Errors",
+			Errors:  helpers.TranslateErrorMessage(err, request),
+		})
+		return
+	}
+
+	// kalau request diset sebagai primary, ubah alamat lainnya menjadi false
+	if request.IsPrimary {
+		if err := database.DB.Model(&models.Address{}).Where("user_id = ?", userID).Update("is_primary", false).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+				Success: false,
+				Message: "Failed to update primary address",
+			})
+			return
+		}
+	}
+
+	// isi data models address dengan data request
+	address := structs.ToCreateAddressResponse(userID, request)
+
+	// simpan di database
+	if err := database.DB.Create(&address).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to create address",
+		})
+		return
+	}
+
+	// kembalikan response dengan data
+	c.JSON(http.StatusCreated, structs.SuccessResponse{
+		Success: true,
+		Message: "Address created successfully",
+		Data:    address,
+	})
+}
