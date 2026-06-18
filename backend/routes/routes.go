@@ -93,6 +93,7 @@ func SetupRouter() *gin.Engine {
 	userProtected.Use(middlewares.AuthMiddleware())
 	{
 		userProtected.GET("/carts", publicController.GetCart)
+		userProtected.POST("/carts", publicController.AddToCart)
 	}
 
 	return router
