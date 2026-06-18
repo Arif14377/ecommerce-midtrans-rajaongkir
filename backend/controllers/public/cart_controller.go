@@ -194,3 +194,32 @@ func UpdateCart(c *gin.Context) {
 	})
 
 }
+
+func RemoveFromCart(c *gin.Context) {
+	userId, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	cartId := c.Param("id")
+
+	var cart models.Cart
+	if err := database.DB.Where("id = ? AND user_id = ?", cartId, userId).First(&cart).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Cart Item Not Found",
+		})
+		return
+	}
+
+	database.DB.Delete(&cart)
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Item Removed from Cart",
+	})
+}
