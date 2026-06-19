@@ -99,6 +99,7 @@ func SetupRouter() *gin.Engine {
 		userProtected.GET("/addresses", publicController.GetAddresses)
 		userProtected.POST("/addresses", publicController.CreateAddress)
 		userProtected.PUT("/addresses/:id", publicController.UpdateAddress)
+		userProtected.DELETE("/addresses/:id", publicController.DeleteAddress)
 	}
 
 	return router

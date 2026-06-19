@@ -144,3 +144,26 @@ func UpdateAddress(c *gin.Context) {
 		Data:    address,
 	})
 }
+
+// DeleteAddress - Delete an address
+func DeleteAddress(c *gin.Context) {
+	userId, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{Success: false, Message: "Unauthorized"})
+		return
+	}
+	addressId := c.Param("id")
+
+	if err := database.DB.Where("id = ? AND user_id = ?", addressId, userId).Delete(&models.Address{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to delete address",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Address deleted successfully",
+	})
+}
