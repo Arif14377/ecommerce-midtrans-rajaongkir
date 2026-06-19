@@ -51,3 +51,41 @@ func ToCreateAddressResponse(userID uint, request AddressCreateRequest) models.A
 		IsPrimary:     request.IsPrimary,
 	}
 }
+
+func ApplyUpdateAddressRequest(address *models.Address, request AddressUpdateRequest) {
+	// Partial updates
+	if request.RecipientName != "" {
+		address.RecipientName = request.RecipientName
+	}
+	if request.Phone != "" {
+		address.Phone = request.Phone
+	}
+	if request.AddressLine1 != "" {
+		address.AddressLine1 = request.AddressLine1
+	}
+	if request.AddressLine2 != "" {
+		address.AddressLine2 = request.AddressLine2
+	}
+	if request.District != "" {
+		address.District = request.District
+	}
+	if request.DistrictId != "" {
+		address.DistrictId = request.DistrictId
+	}
+	if request.City != "" {
+		address.City = request.City
+	}
+	if request.CityId != "" {
+		address.CityId = request.CityId
+	}
+	if request.Province != "" {
+		address.Province = request.Province
+	}
+	if request.ProvinceId != "" {
+		address.ProvinceId = request.ProvinceId
+	}
+	if request.PostalCode != "" {
+		address.PostalCode = request.PostalCode
+	}
+	address.IsPrimary = request.IsPrimary
+}

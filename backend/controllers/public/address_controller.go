@@ -91,3 +91,56 @@ func CreateAddress(c *gin.Context) {
 		Data:    address,
 	})
 }
+
+func UpdateAddress(c *gin.Context) {
+	// ambil user id
+	userID, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	// ambil address id & request body
+	addressID := c.Param("id")
+
+	var request structs.AddressUpdateRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, structs.ErrorResponse{
+			Success: false,
+			Message: "Validation Errors",
+			Errors:  helpers.TranslateErrorMessage(err, request),
+		})
+		return
+	}
+
+	// ambil data address berdasarkan address id dan user id
+	var address models.Address
+	if err := database.DB.Where("id = ? AND user_id = ?", addressID, userID).First(&address).Error; err != nil {
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Address not found",
+		})
+		return
+	}
+
+	// jika request address primary, maka unset false others
+	if request.IsPrimary {
+		database.DB.Model(&models.Address{}).Where("user_id = ?", userID).Update("is_primary", false)
+	}
+
+	// partial update
+	structs.ApplyUpdateAddressRequest(&address, request)
+
+	// save ke database
+	database.DB.Save(&address)
+
+	// kembalikan respon dengan data address
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "Address updated successfully",
+		Data:    address,
+	})
+}
