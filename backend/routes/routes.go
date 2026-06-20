@@ -105,6 +105,8 @@ func SetupRouter() *gin.Engine {
 		userOrders := userProtected.Group("/orders")
 		{
 			userOrders.POST("/checkout", publicController.Checkout)
+			userOrders.GET("", publicController.GetMyOrder)
+			userOrders.GET("/:id", publicController.GetOrderDetail)
 		}
 	}
 

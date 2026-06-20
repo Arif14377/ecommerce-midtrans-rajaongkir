@@ -172,3 +172,63 @@ func Checkout(c *gin.Context) {
 	})
 
 }
+
+func GetMyOrder(c *gin.Context) {
+	// ambil user ID dari auth
+	userID, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	// ambil order dari database berdasarkan userID
+	var orders []models.Order
+	if err := database.DB.Preload("Items.Product.Images").
+		Where("user_id = ?", userID).
+		Order("created_at desc").
+		Find(&orders).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to fetch orders",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Data:    orders,
+	})
+}
+
+func GetOrderDetail(c *gin.Context) {
+	id := c.Param("id")
+	userId, err := helpers.GetAuthUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, structs.ErrorResponse{
+			Success: false,
+			Message: "Unauthorized",
+		})
+		return
+	}
+
+	var order models.Order
+	if err := database.DB.
+		Preload("Items.Product.Images").
+		Where("id = ? AND user_id = ?", id, userId).
+		First(&order).Error; err != nil {
+
+		c.JSON(http.StatusNotFound, structs.ErrorResponse{
+			Success: false,
+			Message: "Order not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Data:    order,
+	})
+}
