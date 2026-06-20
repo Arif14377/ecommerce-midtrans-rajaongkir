@@ -108,6 +108,12 @@ func SetupRouter() *gin.Engine {
 			userOrders.GET("", publicController.GetMyOrder)
 			userOrders.GET("/:id", publicController.GetOrderDetail)
 		}
+
+		// Reviews
+		userReviews := userProtected.Group("/reviews")
+		{
+			userReviews.POST("/", publicController.CreateReview)
+		}
 	}
 
 	api.GET("/provinces", publicController.GetProvinces)
