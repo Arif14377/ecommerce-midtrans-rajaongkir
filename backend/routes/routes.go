@@ -86,6 +86,7 @@ func SetupRouter() *gin.Engine {
 		public.GET("/categories/:slug", publicController.GetCategoryBySlug)
 		public.GET("/products", publicController.ListProduct)
 		public.GET("/products/:slug", publicController.GetProductDetailBySlug)
+		public.GET("/reviews/product/:id", publicController.GetReviewsByProduct)
 	}
 
 	// User protected group
@@ -112,7 +113,8 @@ func SetupRouter() *gin.Engine {
 		// Reviews
 		userReviews := userProtected.Group("/reviews")
 		{
-			userReviews.POST("/", publicController.CreateReview)
+			userReviews.POST("", publicController.CreateReview)
+			userReviews.GET("", publicController.GetReviewsByProduct)
 		}
 	}
 

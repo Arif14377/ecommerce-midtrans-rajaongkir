@@ -2,6 +2,7 @@ package publicController
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
@@ -87,5 +88,65 @@ func CreateReview(c *gin.Context) {
 		Success: true,
 		Message: "Review created successfully",
 		Data:    review,
+	})
+}
+
+// GetReviewsByProduct - Menampilkan daftar review berdasarkan Product ID
+func GetReviewsByProduct(c *gin.Context) {
+	productID := c.Param("id")
+	var reviews []models.Review
+
+	limit := 10
+	page := 1
+	if c.Query("page") != "" {
+		page, _ = strconv.Atoi(c.Query("page"))
+	}
+	offset := (page - 1) * limit
+
+	// Count total reviews
+	var total int64
+	database.DB.Model(&models.Review{}).Where("product_id = ?", productID).Count(&total)
+
+	err := database.DB.Preload("User").
+		Where("product_id = ?", productID).
+		Order("created_at desc").
+		Limit(limit).
+		Offset(offset).
+		Find(&reviews).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, structs.ErrorResponse{
+			Success: false,
+			Message: "Failed to fetch reviews",
+		})
+		return
+	}
+
+	var data []structs.ReviewResponse
+	for _, r := range reviews {
+		data = append(data, structs.ReviewResponse{
+			Id:        r.Id,
+			Rating:    r.Rating,
+			Comment:   r.Comment,
+			CreatedAt: r.CreatedAt,
+			User: structs.UserResponse{
+				Id:       r.User.Id,
+				Name:     r.User.Name,
+				Email:    r.User.Email,
+				Username: r.User.Username,
+			},
+		})
+	}
+
+	c.JSON(http.StatusOK, structs.SuccessResponse{
+		Success: true,
+		Message: "List Reviews",
+		Data:    data,
+		Meta: gin.H{
+			"current_page": page,
+			"per_page":     limit,
+			"total":        total,
+			"total_pages":  (int(total) + limit - 1) / limit,
+		},
 	})
 }
