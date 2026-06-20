@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/config"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/structs"
@@ -26,7 +27,12 @@ func RajaOngkirRequest(method, path string, body []byte, contentType string) (an
 	apiKey := config.GetEnv("RAJAONGKIR_API_KEY")
 	url := RAJAONGKIR_URL + path
 
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(body))
+	var reqBody io.Reader
+	if body != nil {
+		reqBody = bytes.NewBuffer(body)
+	}
+
+	req, err := http.NewRequest(method, url, reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +46,17 @@ func RajaOngkirRequest(method, path string, body []byte, contentType string) (an
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("accept", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	respBody, _ := io.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var result structs.RajaOngkirResponseWrapper
 	if err := json.Unmarshal(respBody, &result); err != nil {

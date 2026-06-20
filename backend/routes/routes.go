@@ -102,5 +102,10 @@ func SetupRouter() *gin.Engine {
 		userProtected.DELETE("/addresses/:id", publicController.DeleteAddress)
 	}
 
+	api.GET("/provinces", publicController.GetProvinces)
+	api.GET("/cities/:province_id", publicController.GetCities)
+	api.GET("/districts/:city_id", publicController.GetDistricts)
+	api.POST("/check-cost", publicController.CheckCost)
+
 	return router
 }
