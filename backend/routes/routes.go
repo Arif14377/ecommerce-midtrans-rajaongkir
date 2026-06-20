@@ -100,6 +100,12 @@ func SetupRouter() *gin.Engine {
 		userProtected.POST("/addresses", publicController.CreateAddress)
 		userProtected.PUT("/addresses/:id", publicController.UpdateAddress)
 		userProtected.DELETE("/addresses/:id", publicController.DeleteAddress)
+
+		// Orders
+		userOrders := userProtected.Group("/orders")
+		{
+			userOrders.POST("/checkout", publicController.Checkout)
+		}
 	}
 
 	api.GET("/provinces", publicController.GetProvinces)

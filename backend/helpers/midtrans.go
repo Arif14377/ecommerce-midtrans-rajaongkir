@@ -19,8 +19,12 @@ import (
 // Contoh:
 //
 //	token, redirectURL, err := helpers.GetSnapToken(order, user)
-func GetSnapToken(order models.Order, user models.User) (string, string, error) {
+func GetSnapToken(order models.Order, user models.User) (token, redirectURL string, err error) {
 	serverKey := config.GetEnv("MIDTRANS_SERVER_KEY")
+	if serverKey == "" {
+		return "", "", fmt.Errorf("MIDTRANS_SERVER_KEY is empty")
+	}
+
 	isProd := config.GetEnv("MIDTRANS_IS_PRODUCTION") == "true"
 
 	var s = snap.Client{}
@@ -34,9 +38,19 @@ func GetSnapToken(order models.Order, user models.User) (string, string, error) 
 	var calculatedGrossAmount int64 = 0
 	var items []midtrans.ItemDetails
 	for _, item := range order.Items {
+		if item.Price <= 0 {
+			return "", "", fmt.Errorf("product %d has invalid price", item.ProductId)
+		}
+		if item.Quantity <= 0 {
+			return "", "", fmt.Errorf("product %d has invalid quantity", item.ProductId)
+		}
+
 		name := item.Product.Name
 		if len(name) > 50 {
 			name = name[:50]
+		}
+		if name == "" {
+			name = fmt.Sprintf("Product %d", item.ProductId)
 		}
 
 		items = append(items, midtrans.ItemDetails{
@@ -59,6 +73,13 @@ func GetSnapToken(order models.Order, user models.User) (string, string, error) 
 		calculatedGrossAmount += int64(order.ShippingCost)
 	}
 
+	if len(items) == 0 {
+		return "", "", fmt.Errorf("order has no items")
+	}
+	if calculatedGrossAmount <= 0 {
+		return "", "", fmt.Errorf("gross amount must be greater than 0")
+	}
+
 	req := &snap.Request{
 		TransactionDetails: midtrans.TransactionDetails{
 			OrderID:  order.Id,
@@ -73,9 +94,15 @@ func GetSnapToken(order models.Order, user models.User) (string, string, error) 
 		},
 		Items: &items,
 	}
-	snapResp, err := s.CreateTransaction(req)
-	if err != nil {
-		return "", "", err
+	snapResp, midtransErr := s.CreateTransaction(req)
+	if midtransErr != nil {
+		return "", "", midtransErr
+	}
+	if snapResp == nil {
+		return "", "", fmt.Errorf("Midtrans response is empty")
+	}
+	if snapResp.Token == "" || snapResp.RedirectURL == "" {
+		return "", "", fmt.Errorf("Midtrans response does not contain token or redirect URL")
 	}
 
 	return snapResp.Token, snapResp.RedirectURL, nil
