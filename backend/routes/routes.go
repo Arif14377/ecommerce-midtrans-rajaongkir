@@ -12,6 +12,8 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
+	middlewares.Cors(router)
+
 	// auth routes (no auth required)
 	api := router.Group("/api")
 	{
