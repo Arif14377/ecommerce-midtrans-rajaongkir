@@ -21,7 +21,7 @@ func SetupRouter() *gin.Engine {
 		api.POST("login", controllers.Login)
 
 		// Websocket Notifications
-		api.GET("/ws/notifications", ws.HandleWebSocket)
+		api.GET("/ws/notifications", middlewares.AuthMiddleware(), middlewares.RoleMiddleware("admin"), ws.HandleWebSocket)
 	}
 
 	admin := api.Group("/admin")

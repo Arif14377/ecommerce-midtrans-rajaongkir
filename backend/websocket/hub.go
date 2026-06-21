@@ -55,8 +55,9 @@ func (h *Hub) Run() {
 		case client := <-h.register:
 			h.mu.Lock()
 			h.clients[client] = true
+			totalClients := len(h.clients)
 			h.mu.Unlock()
-			log.Printf("WebSocket: Client connected. Total clients: %d", len(h.clients))
+			log.Printf("WebSocket: Client connected. Total clients: %d", totalClients)
 
 		case client := <-h.unregister:
 			h.mu.Lock()
@@ -64,11 +65,12 @@ func (h *Hub) Run() {
 				delete(h.clients, client)
 				close(client.Send)
 			}
+			totalClients := len(h.clients)
 			h.mu.Unlock()
-			log.Printf("WebSocket: Client disconnected. Total clients: %d", len(h.clients))
+			log.Printf("WebSocket: Client disconnected. Total clients: %d", totalClients)
 
 		case message := <-h.broadcast:
-			h.mu.RLock()
+			h.mu.Lock()
 			for client := range h.clients {
 				select {
 				case client.Send <- message:
@@ -77,7 +79,7 @@ func (h *Hub) Run() {
 					delete(h.clients, client)
 				}
 			}
-			h.mu.RUnlock()
+			h.mu.Unlock()
 		}
 	}
 }
@@ -90,8 +92,8 @@ func (h *Hub) BroadcastToAdmins(msg Message) {
 		return
 	}
 
-	h.mu.RLock()
-	defer h.mu.RUnlock()
+	h.mu.Lock()
+	defer h.mu.Unlock()
 
 	for client := range h.clients {
 		// Hanya kirim ke admin

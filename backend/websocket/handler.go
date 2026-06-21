@@ -34,6 +34,13 @@ const (
 
 // HandleWebSocket adalah handler untuk upgrade koneksi HTTP ke WebSocket
 func HandleWebSocket(c *gin.Context) {
+	// Ambil user info dari context (dari JWT middleware)
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
 	// Upgrade HTTP ke WebSocket
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -41,24 +48,12 @@ func HandleWebSocket(c *gin.Context) {
 		return
 	}
 
-	// Ambil user info dari context (dari JWT middleware)
-	userID, exists := c.Get("user_id")
-	if !exists {
-		userID = uint(0)
-	}
-
-	// Ambil role dari query param atau context
-	role := c.Query("role")
-	if role == "" {
-		role = "admin" // Default ke admin untuk notifikasi
-	}
-
 	// Buat client baru
 	client := &Client{
 		Hub:    GlobalHub,
 		Conn:   conn,
 		UserID: userID.(uint),
-		Role:   role,
+		Role:   "admin",
 		Send:   make(chan []byte, 256),
 	}
 
