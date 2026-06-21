@@ -5,6 +5,7 @@ import (
 	adminController "github.com/arif14377/ecommerce-midtrans-rajaongkir/controllers/admin"
 	publicController "github.com/arif14377/ecommerce-midtrans-rajaongkir/controllers/public"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/middlewares"
+	ws "github.com/arif14377/ecommerce-midtrans-rajaongkir/websocket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +17,9 @@ func SetupRouter() *gin.Engine {
 	{
 		api.POST("/register", controllers.Register)
 		api.POST("login", controllers.Login)
+
+		// Websocket Notifications
+		api.GET("/ws/notifications", ws.HandleWebSocket)
 	}
 
 	admin := api.Group("/admin")

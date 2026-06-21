@@ -9,6 +9,7 @@ import (
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/helpers"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/models"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/structs"
+	ws "github.com/arif14377/ecommerce-midtrans-rajaongkir/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -158,6 +159,20 @@ func Checkout(c *gin.Context) {
 
 	// finish transaction (commit)
 	tx.Commit()
+
+	// kirim notif realtime
+
+	if ws.GlobalHub != nil {
+		ws.GlobalHub.BroadcastToAdmins(ws.Message{
+			Type: "new_order",
+			Payload: map[string]any{
+				"order_id":    orderID,
+				"customer":    user.Name,
+				"total_price": total,
+				"status":      "pending",
+			},
+		})
+	}
 
 	// kembalikan response
 	c.JSON(http.StatusOK, structs.SuccessResponse{

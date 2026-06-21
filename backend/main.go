@@ -7,6 +7,7 @@ import (
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database/seeders"
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/routes"
+	ws "github.com/arif14377/ecommerce-midtrans-rajaongkir/websocket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +20,9 @@ func main() {
 
 	// menjalankan seeder
 	seeders.Seed()
+
+	//inisialisasi WebSocket Hub
+	ws.InitHub()
 
 	r := routes.SetupRouter()
 
