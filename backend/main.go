@@ -3,11 +3,11 @@ package main
 import (
 	"net/http"
 
-	"github.com/arif14377/ecommerce-midtrans-rajaongkir/config"
-	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database"
-	"github.com/arif14377/ecommerce-midtrans-rajaongkir/database/seeders"
-	"github.com/arif14377/ecommerce-midtrans-rajaongkir/routes"
-	ws "github.com/arif14377/ecommerce-midtrans-rajaongkir/websocket"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/config"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/database"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/database/seeders"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/routes"
+	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/websocket"
 	"github.com/gin-gonic/gin"
 )
 
