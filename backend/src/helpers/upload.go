@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"fmt"
+	"mime"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -53,6 +55,44 @@ func UploadFile(c *gin.Context, config structs2.UploadConfig) structs2.UploadRes
 			allowed = true
 			break
 		}
+	}
+
+	// cek mime type
+	file, err := config.File.Open()
+	if err != nil {
+		return structs2.UploadResult{
+			Response: &structs2.ErrorResponse{
+				Success: false,
+				Message: "Failed to open file",
+				Errors:  map[string]string{"file": err.Error()},
+			},
+		}
+	}
+	defer file.Close()
+
+	buffer := make([]byte, 512)
+	_, err = file.Read(buffer)
+	if err != nil {
+		return structs2.UploadResult{
+			Response: &structs2.ErrorResponse{
+				Success: false,
+				Message: "Failed to read file",
+				Errors:  map[string]string{"file": err.Error()},
+			},
+		}
+	}
+
+	contentType := http.DetectContentType(buffer)
+
+	allowedMimeTypes := make(map[string]bool, len(config.AllowedTypes))
+	for _, t := range config.AllowedTypes {
+		if mimeType := mime.TypeByExtension(strings.ToLower(t)); mimeType != "" {
+			allowedMimeTypes[strings.Split(mimeType, ";")[0]] = true
+		}
+	}
+
+	if allowedMimeTypes[contentType] {
+		allowed = true
 	}
 
 	if !allowed {
