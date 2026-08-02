@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import Api from '../../../services/api.ts';
 import type { PublicProduct, MetaPaginatedResponse } from '../../../types';
 
-export const usePrroducts = (
-    page: number,
-    perPage: number,
+export const useProducts = (
+    page: number = 1,
+    perPage: number = 8,
     search?: string,
     categorySlug?: string
 ) => {
