@@ -43,7 +43,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
                 <FiMinus className="w-4 h-4 text-gray-600" />
             </button>
 
-            <span className="px-3 py-2 text-center font-bold text-gray-800 min-w-[45px] bg-gray-50/50">
+            <span className="px-3 py-2 text-center font-bold text-gray-800 min-w-11.25 bg-gray-50/50">
         {isLoading ? (
             <div className="w-4 h-4 border-2 border-gray-300 border-t-cyan-500 rounded-full animate-spin mx-auto"></div>
         ) : (
