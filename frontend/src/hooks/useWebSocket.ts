@@ -1,6 +1,6 @@
 import { useNotificationStore } from '../stores/notification';
 import { useAuthStore } from '../stores/auth';
-import type { WebSocketMessage, Notification } from '../types/notification';
+import type { WebSocketMessage, Notification } from '../types';
 
 const WS_URL = import.meta.env.VITE_WS_URL;
 
