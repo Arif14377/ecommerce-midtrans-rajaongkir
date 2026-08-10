@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
     <>
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-transform duration-300 ease-out w-[220px]
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200 transition-transform duration-300 ease-out w-55
         ${isMobile
           ? sidebarOpen
             ? 'translate-x-0'
