@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { LayoutState } from '../types';
 
-export const useLayoutState = create<LayoutState>((set)=>({
+export const useLayoutStore = create<LayoutState>((set)=>({
     sidebarOpen: false,
     isMobile: typeof window !== 'undefined' ? window.innerWidth < 768 : false,
     toggleSidebar: () => set((state)=>({ sidebarOpen: !state.sidebarOpen })),
