@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           <NotificationDropdown />
 
           {/* Mobile user name */}
-          <span className="sm:hidden text-sm font-medium text-gray-700 truncate max-w-[120px]">
+          <span className="sm:hidden text-sm font-medium text-gray-700 truncate max-w-30">
             Hi, {user?.name?.split(' ')[0] || 'Admin'}
           </span>
 
