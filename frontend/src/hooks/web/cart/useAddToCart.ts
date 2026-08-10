@@ -10,7 +10,7 @@ interface AddToCartParam {
 export const useAddToCart = () => {
     const queryClient = useQueryClient();
 
-    useMutation<SuccessResponse<CartItem>, Error, AddToCartParam>({
+    return useMutation<SuccessResponse<CartItem>, Error, AddToCartParam>({
         mutationFn: async ({ productId, quantity }) => {
             const response = await Api.post('/api/carts', {
                 product_id: productId,
