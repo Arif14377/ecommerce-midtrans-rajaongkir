@@ -3,6 +3,7 @@ import { useAuthStore } from "../stores/auth";
 
 // Views
 import Login from "../views/auth/Login";
+import Register from "../views/auth/Register";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -15,6 +16,12 @@ export default function AppRoutes() {
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
+      />
+
+      {/* ============ ROUTE REGISTER ============ */}
+      <Route
+        path="/register"
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
       />
     </Routes>
   );
