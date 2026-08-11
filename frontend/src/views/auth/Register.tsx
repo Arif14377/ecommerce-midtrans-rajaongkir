@@ -82,7 +82,7 @@ const Register: React.FC = () => {
             to="/"
             className="flex items-center justify-center gap-3 mb-8 w-fit mx-auto cursor-pointer"
           >
-            <img src="/tokokita.png" alt="TokoKita Logo" className="w-10 h-10 object-contain" />
+            <img src="https://is3.cloudhost.id/kodemastery/tokokita.png" alt="TokoKita Logo" className="w-10 h-10 object-contain" />
             <span className="text-2xl font-bold text-gray-900">TokoKita</span>
           </Link>
 
