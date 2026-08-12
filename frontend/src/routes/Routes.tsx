@@ -4,6 +4,8 @@ import { useAuthStore } from "../stores/auth";
 // Views
 import Login from "../views/auth/Login";
 import Register from "../views/auth/Register";
+import DashboardPage from "../views/admin/dashboard/Index";
+import ProtectedRoute from "../components/guards/ProtectedRoute";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -23,6 +25,14 @@ export default function AppRoutes() {
         path="/register"
         element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
       />
+
+      <Route path="/admin">
+        {/* ============ ROUTE DASHBOARD ============ */}
+        <Route
+          path="dashboard"
+          element={<ProtectedRoute component={DashboardPage} requiredPermission="dashboard-index" />}
+        />
+      </Route>
     </Routes>
   );
 }
