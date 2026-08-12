@@ -6,6 +6,7 @@ import Login from "../views/auth/Login";
 import Register from "../views/auth/Register";
 import DashboardPage from "../views/admin/dashboard/Index";
 import ProtectedRoute from "../components/guards/ProtectedRoute";
+import SlidersIndex from "../views/admin/sliders/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -26,12 +27,22 @@ export default function AppRoutes() {
         element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
       />
 
+      {/* ============ ROUTES ADMIN ============ */}
       <Route path="/admin">
         {/* ============ ROUTE DASHBOARD ============ */}
         <Route
           path="dashboard"
           element={<ProtectedRoute component={DashboardPage} requiredPermission="dashboard-index" />}
         />
+
+        {/* ============ ROUTE SLIDERS ============ */}
+        <Route path="sliders">
+          {/* Route Index - permission sliders-index */}
+          <Route
+            index
+            element={<ProtectedRoute component={SlidersIndex} requiredPermission="sliders-index" />}
+          />
+        </Route>
       </Route>
     </Routes>
   );
