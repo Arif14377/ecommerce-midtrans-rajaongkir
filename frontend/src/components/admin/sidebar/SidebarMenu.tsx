@@ -15,7 +15,7 @@ interface MenuItem {
 const mainMenuItems: MenuItem[] = [
   {
     name: 'Dashboard',
-    path: '',
+    path: '/admin/dashboard',
     icon: <FiHome />,
     permission: 'dashboard-index',
   },
