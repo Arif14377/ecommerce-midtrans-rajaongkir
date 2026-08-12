@@ -9,7 +9,7 @@ const SidebarHeader: React.FC = () => {
       <div className="flex items-center gap-2.5">
         <div className="flex items-center justify-center">
           <img
-            src="/tokokita.png"
+            src="https://is3.cloudhost.id/kodemastery/tokokita.png"
             alt="Logo"
             className="w-8 h-8 object-contain"
           />
