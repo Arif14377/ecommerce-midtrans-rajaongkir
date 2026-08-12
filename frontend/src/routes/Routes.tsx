@@ -13,6 +13,7 @@ import CategoryCreate from "../views/admin/categories/Create";
 import CategoryEdit from "../views/admin/categories/Edit";
 import ProductsIndex from "../views/admin/products/Index";
 import ProductCreate from "../views/admin/products/Create";
+import ProductEdit from "../views/admin/products/Edit";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -89,6 +90,12 @@ export default function AppRoutes() {
           <Route
             path="create"
             element={<ProtectedRoute component={ProductCreate} requiredPermission="products-create" />}
+          />
+
+          {/* Route Edit - permission products-edit */}
+          <Route
+            path="edit/:id"
+            element={<ProtectedRoute component={ProductEdit} requiredPermission="products-edit" />}
           />
         </Route>
       </Route>
