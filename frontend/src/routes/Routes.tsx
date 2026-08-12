@@ -9,6 +9,7 @@ import ProtectedRoute from "../components/guards/ProtectedRoute";
 import SlidersIndex from "../views/admin/sliders/Index";
 import SliderCreate from "../views/admin/sliders/Create";
 import CategoriesIndex from "../views/admin/categories/Index";
+import CategoryCreate from "../views/admin/categories/Create";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -58,6 +59,12 @@ export default function AppRoutes() {
           <Route
             index
             element={<ProtectedRoute component={CategoriesIndex} requiredPermission="categories-index" />}
+          />
+
+          {/* Route Create - permission categories-create */}
+          <Route
+            path="create"
+            element={<ProtectedRoute component={CategoryCreate} requiredPermission="categories-create" />}
           />
         </Route>
       </Route>
