@@ -20,7 +20,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
     login({ email, password }, {

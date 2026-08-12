@@ -23,7 +23,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     createReview(
       { product_id: productId, rating, comment },

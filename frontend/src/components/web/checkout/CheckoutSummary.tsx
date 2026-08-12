@@ -6,7 +6,7 @@ interface CheckoutSummaryProps {
   subtotal: number;
   shippingCost: number;
   isProcessing: boolean;
-  onPayment: (e: React.FormEvent) => void;
+  onPayment: React.SubmitEventHandler<HTMLFormElement>;
   isServiceSelected: boolean;
 }
 

@@ -1,5 +1,5 @@
 // React
-import React, { useState, type FormEvent } from 'react';
+import React, { useState } from 'react';
 
 // Router
 import { useNavigate } from 'react-router';
@@ -65,7 +65,7 @@ const SliderCreate: React.FC = () => {
     setImagePreview(null);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
