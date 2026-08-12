@@ -11,6 +11,7 @@ import SliderCreate from "../views/admin/sliders/Create";
 import CategoriesIndex from "../views/admin/categories/Index";
 import CategoryCreate from "../views/admin/categories/Create";
 import CategoryEdit from "../views/admin/categories/Edit";
+import ProductsIndex from "../views/admin/products/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -72,6 +73,15 @@ export default function AppRoutes() {
           <Route
             path="edit/:id"
             element={<ProtectedRoute component={CategoryEdit} requiredPermission="categories-edit" />}
+          />
+        </Route>
+
+        {/* ============ ROUTE PRODUCTS ============ */}
+        <Route path="products">
+          {/* Route Index - permission products-index */}
+          <Route
+            index
+            element={<ProtectedRoute component={ProductsIndex} requiredPermission="products-index" />}
           />
         </Route>
       </Route>
