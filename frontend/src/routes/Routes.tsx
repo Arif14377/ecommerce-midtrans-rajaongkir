@@ -15,6 +15,7 @@ import ProductsIndex from "../views/admin/products/Index";
 import ProductCreate from "../views/admin/products/Create";
 import ProductEdit from "../views/admin/products/Edit";
 import CustomersIndex from "../views/admin/customers/Index";
+import ReportsIndex from "../views/admin/reports/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -106,6 +107,13 @@ export default function AppRoutes() {
           <Route
             index
             element={<ProtectedRoute component={CustomersIndex} requiredPermission="customers-index" />}
+          />
+        </Route>
+
+        <Route path="reports">
+          <Route 
+            index 
+            element={<ProtectedRoute component={ReportsIndex} requiredPermission="reports-index" />} 
           />
         </Route>
       </Route>
