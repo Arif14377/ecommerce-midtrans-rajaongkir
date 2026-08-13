@@ -14,6 +14,7 @@ import CategoryEdit from "../views/admin/categories/Edit";
 import ProductsIndex from "../views/admin/products/Index";
 import ProductCreate from "../views/admin/products/Create";
 import ProductEdit from "../views/admin/products/Edit";
+import CustomersIndex from "../views/admin/customers/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -96,6 +97,15 @@ export default function AppRoutes() {
           <Route
             path="edit/:id"
             element={<ProtectedRoute component={ProductEdit} requiredPermission="products-edit" />}
+          />
+        </Route>
+
+        {/* ============ ROUTE CUSTOMERS ============ */}
+        <Route path="customers">
+          {/* Route Index - permission customers-index */}
+          <Route
+            index
+            element={<ProtectedRoute component={CustomersIndex} requiredPermission="customers-index" />}
           />
         </Route>
       </Route>
