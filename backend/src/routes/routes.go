@@ -101,7 +101,7 @@ func SetupRouter() *gin.Engine {
 	{
 		userProtected.GET("/carts", publicController.GetCart)
 		userProtected.POST("/carts", publicController.AddToCart)
-		userProtected.PUT("/carts", publicController.UpdateCart)
+		userProtected.PUT("/carts/:id", publicController.UpdateCart)
 		userProtected.DELETE("/carts/:id", publicController.RemoveFromCart)
 		userProtected.GET("/addresses", publicController.GetAddresses)
 		userProtected.POST("/addresses", publicController.CreateAddress)
