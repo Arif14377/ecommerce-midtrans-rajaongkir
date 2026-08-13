@@ -29,6 +29,7 @@ import WebDashboard from "../views/web/dashboard/Index";
 import Addresses from "../views/web/dashboard/addresses/Index";
 import WebOrderDetail from "../views/web/dashboard/orders/Index";
 import Home from "../views/web/home/Index";
+import CategoryDetail from "../views/web/categories/Detail";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -39,6 +40,9 @@ export default function AppRoutes() {
     <Routes>
       {/* ============ ROUTE HOME ============ */}
       <Route path="/" element={<Home />} />
+
+      {/* ============ ROUTE CATEGORY DETAIL ============ */}
+      <Route path="/categories/:slug" element={<CategoryDetail />} />
 
       {/* ============ ROUTE LOGIN ============ */}
       <Route
