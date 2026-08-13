@@ -51,9 +51,9 @@ const CustomerSidebar: React.FC = () => {
         <div className="p-2">
           <nav className="space-y-1">
             <Link
-              to=""
+              to="/dashboard"
               className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-colors ${isActive(
-                ''
+                '/dashboard'
               )}`}
             >
               <FiShoppingBag className="w-5 h-5" />
@@ -61,9 +61,9 @@ const CustomerSidebar: React.FC = () => {
             </Link>
 
             <Link
-              to=""
+              to="/dashboard/addresses"
               className={`flex items-center gap-3 px-4 py-3 rounded-lg font-bold transition-colors ${isActive(
-                ''
+                '/dashboard/addresses'
               )}`}
             >
               <FiMapPin className="w-5 h-5" />
@@ -99,15 +99,15 @@ const CustomerSidebar: React.FC = () => {
 
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           <Link
-            to=""
-            className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm border transition-colors ${location.pathname === ''
+            to="/dashboard"
+            className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm border transition-colors ${location.pathname === '/dashboard'
               ? 'bg-cyan-500 text-white border-cyan-500 shadow-md shadow-cyan-200'
               : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
               }`}
           >
             <FiShoppingBag
               className={
-                location.pathname === ''
+                location.pathname === '/dashboard'
                   ? 'text-white'
                   : 'text-gray-400'
               }
@@ -116,7 +116,7 @@ const CustomerSidebar: React.FC = () => {
           </Link>
 
           <Link
-            to=""
+            to="/dashboard/addresses"
             className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm border transition-colors ${location.pathname === ''
               ? 'bg-cyan-500 text-white border-cyan-500 shadow-md shadow-cyan-200'
               : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
@@ -124,7 +124,7 @@ const CustomerSidebar: React.FC = () => {
           >
             <FiMapPin
               className={
-                location.pathname === ''
+                location.pathname === '/dashboard/addresses'
                   ? 'text-white'
                   : 'text-gray-400'
               }
