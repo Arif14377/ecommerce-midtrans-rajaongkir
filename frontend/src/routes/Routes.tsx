@@ -20,6 +20,7 @@ import PermissionsIndex from "../views/admin/permissions/Index";
 import PermissionCreate from "../views/admin/permissions/Create";
 import PermissionEdit from "../views/admin/permissions/Edit";
 import RolesIndex from "../views/admin/roles/Index";
+import RoleCreate from "../views/admin/roles/Create";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -148,6 +149,12 @@ export default function AppRoutes() {
           <Route
             index
             element={<ProtectedRoute component={RolesIndex} requiredPermission="roles-index" />}
+          />
+
+          {/* Route Create - permission roles-create */}
+          <Route
+            path="create"
+            element={<ProtectedRoute component={RoleCreate} requiredPermission="roles-create" />}
           />
         </Route>
       </Route>
