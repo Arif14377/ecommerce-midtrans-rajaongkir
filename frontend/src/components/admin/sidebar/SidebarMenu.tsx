@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import {FiHome, FiChevronDown, FiImage, FiTag, FiBox,  FiUsers, FiBarChart2} from 'react-icons/fi';
+import {FiHome, FiChevronDown, FiImage, FiTag, FiBox,  FiUsers, FiBarChart2, FiSettings} from 'react-icons/fi';
 import { useLayoutStore } from '../../../stores/layout';
 import { usePermission } from '../../../hooks/usePermission';
 
@@ -48,6 +48,17 @@ const mainMenuItems: MenuItem[] = [
     path: '/admin/reports',
     icon: <FiBarChart2 />,
     permission: 'reports-index',
+  },
+  {
+    name: 'Pengaturan',
+    icon: <FiSettings />,
+    children: [
+      {
+        name: 'Permissions',
+        path: '/admin/permissions',
+        permission: 'permissions-index',
+      },
+    ],
   },
 ];
 
