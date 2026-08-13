@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router';
-import {FiHome, FiChevronDown, FiImage, FiTag, FiBox} from 'react-icons/fi';
+import {FiHome, FiChevronDown, FiImage, FiTag, FiBox,  FiUsers} from 'react-icons/fi';
 import { useLayoutStore } from '../../../stores/layout';
 import { usePermission } from '../../../hooks/usePermission';
 
@@ -36,6 +36,12 @@ const mainMenuItems: MenuItem[] = [
     path: '/admin/products',
     icon: <FiBox />,
     permission: 'products-index',
+  },
+  {
+    name: 'Customers',
+    path: '/admin/customers',
+    icon: <FiUsers />,
+    permission: 'customers-index',
   },
 ];
 
