@@ -27,6 +27,7 @@ import UserCreate from "../views/admin/users/Create";
 import UserEdit from "../views/admin/users/Edit";
 import WebDashboard from "../views/web/dashboard/Index";
 import Addresses from "../views/web/dashboard/addresses/Index";
+import WebOrderDetail from "../views/web/dashboard/orders/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -196,6 +197,7 @@ export default function AppRoutes() {
       <Route path="/dashboard">
         <Route index element={<ProtectedRoute component={WebDashboard} requiredRole="user" />} />
         <Route path="addresses" element={<ProtectedRoute component={Addresses} requiredRole="user" />} />
+        <Route path="orders/:id" element={<ProtectedRoute component={WebOrderDetail} requiredRole="user" />} />
       </Route>
     </Routes>
   );
