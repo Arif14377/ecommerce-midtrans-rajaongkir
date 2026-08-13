@@ -25,6 +25,7 @@ import RoleEdit from "../views/admin/roles/Edit";
 import UsersIndex from "../views/admin/users/Index";
 import UserCreate from "../views/admin/users/Create";
 import UserEdit from "../views/admin/users/Edit";
+import WebDashboard from "../views/web/dashboard/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -188,6 +189,11 @@ export default function AppRoutes() {
             element={<ProtectedRoute component={UserEdit} requiredPermission="users-edit" />}
           />
         </Route>
+      </Route>
+
+      {/* ============ ROUTE CUSTOMER DASHBOARD ============ */}
+      <Route path="/dashboard">
+        <Route index element={<ProtectedRoute component={WebDashboard} requiredRole="user" />} />
       </Route>
     </Routes>
   );
