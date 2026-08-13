@@ -12,7 +12,7 @@ export const useCheckCost = (data: Partial<ShippingCostRequest>) => {
             }
 
             const response = await Api.post('/api/check-cost', data);
-            return response.data;
+            return response.data.data;
         },
         enabled: !!data.destination && !!data.courier && !!data.weight && data.weight > 0,
         staleTime: 5 * 60 * 1000,
