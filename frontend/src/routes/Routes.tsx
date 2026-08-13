@@ -32,6 +32,7 @@ import Home from "../views/web/home/Index";
 import CategoryDetail from "../views/web/categories/Detail";
 import ProductDetail from "../views/web/products/Detail";
 import Cart from "../views/web/cart/Index";
+import Checkout from "../views/web/checkout/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -51,6 +52,9 @@ export default function AppRoutes() {
 
       {/* ============ ROUTE CART ============ */}
       <Route path="/cart" element={<Cart />} />
+
+      {/* ============ ROUTE CHECKOUT ============ */}
+      <Route path="/checkout" element={<Checkout />} />
 
       {/* ============ ROUTE LOGIN ============ */}
       <Route
