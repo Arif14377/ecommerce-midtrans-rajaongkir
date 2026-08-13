@@ -1,19 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Api from '../../../services/api.ts';
-import type { PermissionUpdateRequest } from '../../../types';
+import type { SuccessResponse, PermissionUpdateRequest } from '../../../types';
 
 interface UpdatePermissionParams {
     id: number;
-    data: UpdatePermissionParams;
+    data: PermissionUpdateRequest;
 }
 
 export const usePermissionUpdate = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<PermissionUpdateRequest, Error, UpdatePermissionParams>({
+    return useMutation<SuccessResponse<PermissionUpdateRequest>, Error, UpdatePermissionParams>({
         mutationFn: async ({ id, data }) => {
             const response = await Api.put(`/api/admin/permissions/${id}`, data);
-            return response.data.data;
+            return response.data;
         },
         onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: ['permission', variables.id] });
