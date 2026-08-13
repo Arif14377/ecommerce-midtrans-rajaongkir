@@ -58,6 +58,11 @@ const mainMenuItems: MenuItem[] = [
         path: '/admin/permissions',
         permission: 'permissions-index',
       },
+      {
+        name: 'Roles',
+        path: '/admin/roles',
+        permission: 'roles-index',
+      },
     ],
   },
 ];
