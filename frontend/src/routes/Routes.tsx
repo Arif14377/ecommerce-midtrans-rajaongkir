@@ -30,6 +30,7 @@ import Addresses from "../views/web/dashboard/addresses/Index";
 import WebOrderDetail from "../views/web/dashboard/orders/Index";
 import Home from "../views/web/home/Index";
 import CategoryDetail from "../views/web/categories/Detail";
+import ProductDetail from "../views/web/products/Detail";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -43,6 +44,9 @@ export default function AppRoutes() {
 
       {/* ============ ROUTE CATEGORY DETAIL ============ */}
       <Route path="/categories/:slug" element={<CategoryDetail />} />
+
+      {/* ============ ROUTE PRODUCT DETAIL ============ */}
+      <Route path="/products/:slug" element={<ProductDetail />} />
 
       {/* ============ ROUTE LOGIN ============ */}
       <Route
