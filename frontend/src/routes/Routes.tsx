@@ -28,6 +28,7 @@ import UserEdit from "../views/admin/users/Edit";
 import WebDashboard from "../views/web/dashboard/Index";
 import Addresses from "../views/web/dashboard/addresses/Index";
 import WebOrderDetail from "../views/web/dashboard/orders/Index";
+import Home from "../views/web/home/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -36,6 +37,9 @@ export default function AppRoutes() {
 
   return (
     <Routes>
+      {/* ============ ROUTE HOME ============ */}
+      <Route path="/" element={<Home />} />
+
       {/* ============ ROUTE LOGIN ============ */}
       <Route
         path="/login"
