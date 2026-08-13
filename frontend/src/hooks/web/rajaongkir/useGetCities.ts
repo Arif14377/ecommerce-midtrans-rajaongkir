@@ -9,6 +9,6 @@ export const useGetCities = (provinceId: number) => {
             const response = await Api.get(`/api/cities/${provinceId}`);
             return response.data;
         },
-        enabled: !!provinceId
+        enabled: provinceId > 0
     });
 };
