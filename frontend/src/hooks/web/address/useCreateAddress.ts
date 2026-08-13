@@ -7,7 +7,7 @@ export const useCreateAddress = () => {
 
     return useMutation<SuccessResponse<AddressResponse>, Error, AddressCreateRequest>({
         mutationFn: async (data) => {
-            const response = await Api.post('/api/address', data);
+            const response = await Api.post('/api/addresses', data);
             return response.data;
         },
         onSuccess: () => {
