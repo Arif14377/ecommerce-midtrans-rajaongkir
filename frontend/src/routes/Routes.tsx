@@ -21,6 +21,7 @@ import PermissionCreate from "../views/admin/permissions/Create";
 import PermissionEdit from "../views/admin/permissions/Edit";
 import RolesIndex from "../views/admin/roles/Index";
 import RoleCreate from "../views/admin/roles/Create";
+import RoleEdit from "../views/admin/roles/Edit";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -155,6 +156,12 @@ export default function AppRoutes() {
           <Route
             path="create"
             element={<ProtectedRoute component={RoleCreate} requiredPermission="roles-create" />}
+          />
+
+          {/* Route Edit - permission roles-edit */}
+          <Route
+            path="edit/:id"
+            element={<ProtectedRoute component={RoleEdit} requiredPermission="roles-edit" />}
           />
         </Route>
       </Route>
