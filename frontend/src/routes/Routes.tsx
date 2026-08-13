@@ -19,6 +19,7 @@ import ReportsIndex from "../views/admin/reports/Index";
 import PermissionsIndex from "../views/admin/permissions/Index";
 import PermissionCreate from "../views/admin/permissions/Create";
 import PermissionEdit from "../views/admin/permissions/Edit";
+import RolesIndex from "../views/admin/roles/Index";
 
 // Membuat route login
 export default function AppRoutes() {
@@ -138,6 +139,15 @@ export default function AppRoutes() {
           <Route
             path="edit/:id"
             element={<ProtectedRoute component={PermissionEdit} requiredPermission="permissions-edit" />}
+          />
+        </Route>
+
+        {/* ============ ROUTE ROLES ============ */}
+        <Route path="roles">
+          {/* Route Index - permission roles-index */}
+          <Route
+            index
+            element={<ProtectedRoute component={RolesIndex} requiredPermission="roles-index" />}
           />
         </Route>
       </Route>
