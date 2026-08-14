@@ -128,6 +128,7 @@ func SetupRouter() *gin.Engine {
 	api.GET("/cities/:province_id", publicController.GetCities)
 	api.GET("/districts/:city_id", publicController.GetDistricts)
 	api.POST("/check-cost", publicController.CheckCost)
+	api.POST("/callback/midtrans", publicController.MidtransCallback)
 
 	return router
 }
