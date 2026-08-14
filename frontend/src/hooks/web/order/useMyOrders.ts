@@ -8,7 +8,7 @@ export const useMyOrders = <T = SuccessResponse<OrderResponse[]>>(
     return useQuery<SuccessResponse<OrderResponse[]>, Error, T>({
         queryKey: ['my-orders'],
         queryFn: async () => {
-            const response = await Api.get('/api/public/orders');
+            const response = await Api.get('/api/orders');
             return response.data;
         },
         select
