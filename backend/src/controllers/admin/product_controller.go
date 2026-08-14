@@ -84,7 +84,7 @@ func CreateProduct(c *gin.Context) {
 		config := structs2.UploadConfig{
 			AllowedTypes:   []string{".jpg", ".jpeg", ".png", ".webp"},
 			MaxSize:        2 * 1024 * 1024, // 2MB
-			DestinationDir: "./public/uploads/products",
+			DestinationDir: "./src/public/uploads/products",
 		}
 
 		for i, file := range files {
@@ -190,7 +190,7 @@ func UpdateProduct(c *gin.Context) {
 		config := structs2.UploadConfig{
 			AllowedTypes:   []string{".jpg", ".jpeg", ".png", ".webp"},
 			MaxSize:        2 * 1024 * 1024,
-			DestinationDir: "./public/uploads/products",
+			DestinationDir: "./src/public/uploads/products",
 		}
 
 		for _, file := range files {
@@ -237,7 +237,7 @@ func DeleteProduct(c *gin.Context) {
 
 	// Hapus file image dari storage
 	for _, image := range product.Images {
-		filePath := "./public/uploads/products/" + image.ImageUrl
+		filePath := "./src/public/uploads/products/" + image.ImageUrl
 		_ = helpers2.RemoveFile(filePath)
 	}
 

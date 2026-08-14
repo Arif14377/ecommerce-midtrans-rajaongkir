@@ -1,6 +1,8 @@
 package structs
 
 import (
+	"strings"
+
 	"github.com/arif14377/ecommerce-midtrans-rajaongkir/src/models"
 )
 
@@ -42,7 +44,7 @@ func ToProductResponse(product models.Product) ProductResponse {
 	images := []ProductImageResponse{}
 	for _, img := range product.Images {
 		url := img.ImageUrl
-		if len(url) > 0 && url[0] != '/' && len(url) < 4 || url[:4] != "http" {
+		if len(url) > 0 && url[0] != '/' && !strings.HasPrefix(url, "http") {
 			url = "/uploads/products/" + url
 		}
 		images = append(images, ProductImageResponse{
@@ -69,7 +71,7 @@ func ToProductResponseWithBaseURL(product models.Product, baseURL string) Produc
 	for _, img := range product.Images {
 		url := img.ImageUrl
 		if len(url) > 0 {
-			if url[0] != '/' && (len(url) < 4 || url[:4] != "http") {
+			if url[0] != '/' && !strings.HasPrefix(url, "http") {
 				url = baseURL + "/uploads/products/" + url
 			} else if url[0] == '/' {
 				url = baseURL + url

@@ -32,7 +32,7 @@ func FindSliders(c *gin.Context) {
 	for _, s := range sliders {
 		sliderResponses = append(sliderResponses, structs2.SliderResponse{
 			Id:    s.Id,
-			Image: s.Image,
+			Image: helpers.BuildHostURL(c) + "/uploads/sliders/" + s.Image,
 			Link:  s.Link,
 		})
 	}
@@ -68,7 +68,7 @@ func CreateSlider(c *gin.Context) {
 	}
 
 	// Create directory if not exists
-	uploadPath := "./public/uploads/sliders"
+	uploadPath := "./src/public/uploads/sliders"
 	if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
 		os.MkdirAll(uploadPath, os.ModePerm)
 	}
@@ -120,7 +120,7 @@ func DeleteSlider(c *gin.Context) {
 		return
 	}
 
-	os.Remove(fmt.Sprintf("./public/uploads/sliders/%s", slider.Image))
+	os.Remove(fmt.Sprintf("./src/public/uploads/sliders/%s", slider.Image))
 
 	if err := database.DB.Delete(&slider).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, structs2.ErrorResponse{

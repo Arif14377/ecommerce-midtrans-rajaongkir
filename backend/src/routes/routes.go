@@ -13,6 +13,8 @@ func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
 	middlewares.Cors(router)
+	router.Static("/uploads/products", "./src/public/uploads/products")
+	router.Static("/uploads/sliders", "./src/public/uploads/sliders")
 
 	// auth routes (no auth required)
 	api := router.Group("/api")
