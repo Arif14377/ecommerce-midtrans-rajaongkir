@@ -6,7 +6,11 @@ import AppRoutes from './routes/Routes';
 const App: FC = () => {
   return (
     <>
-      <Toaster />
+      <Toaster
+        toastOptions={{
+          duration: 2500,
+        }}
+      />
       <ScrollToTop />
       <AppRoutes />
     </>
