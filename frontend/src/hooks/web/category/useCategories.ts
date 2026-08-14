@@ -7,7 +7,7 @@ export const useCategories = () => {
         queryKey: ['web-categories'],
         queryFn: async () => {
             const response = await Api.get('/api/public/categories');
-            return response.data;
+            return response.data.data;
         }
     });
 }
