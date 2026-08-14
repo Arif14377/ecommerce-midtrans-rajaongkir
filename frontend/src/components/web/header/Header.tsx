@@ -83,7 +83,7 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="/tokokita.png"
+                src="https://is3.cloudhost.id/kodemastery/tokokita.png"
                 alt="Logo"
                 className="w-8 h-8 object-contain"
               />
